@@ -1,0 +1,29 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout do Código') {
+            steps {
+                git branch: 'main', credentialsId: 'github-cred', url: 'https://github.com/ivanmd96/projeto-cloud-gcp.git'
+            }
+        }
+
+        stage('Terraform Init') {
+            steps {
+                sh 'cd terraform && terraform init'
+            }
+        }
+
+        stage('Terraform Apply') {
+            steps {
+                sh 'cd terraform && terraform apply -auto-approve'
+            }
+        }
+
+        stage('Configurar Ansible') {
+            steps {
+                sh 'cd ansible && ansible-playbook playbook.yml'
+            }
+        }
+    }
+}

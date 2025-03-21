@@ -1,0 +1,12 @@
+- name: Instalar Python na VM
+  hosts: vm
+  become: yes
+  tasks:
+    - name: Atualizar pacotes
+      apt:
+        update_cache: yes
+
+    - name: Instalar Python
+      apt:
+        name: python3
+        state: present
