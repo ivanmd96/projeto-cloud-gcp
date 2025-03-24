@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Checkout do Código') {
             steps {
-                git branch: 'main', credentialsId: 'github-cred', url: 'https://github.com/ivanmd96/projeto-cloud-gcp.git'
+                git branch: 'main', credentialsId: 'github-cred', url: 'git@github.com:ivanmd96/projeto-cloud-gcp.git'
             }
         }
 
