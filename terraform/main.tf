@@ -38,7 +38,7 @@ data "google_compute_subnetwork" "subnet" {
   ip_cidr_range = var.subnet_range
 }
 
-data "google_compute_firewall" "allow_ssh" {
+resource "google_compute_firewall" "allow_ssh" {
   name    = "allow-ssh"
   network = data.google_compute_network.vpc_network.id
 
