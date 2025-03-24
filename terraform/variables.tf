@@ -55,5 +55,5 @@ variable "vm_image" {
 variable "ssh_key_path" {
   description = "Caminho do arquivo da chave pública SSH"
   type        = string
-  default     = "~/.ssh/id_rsa.pub"
+  default     = "chave.pub"
 }
