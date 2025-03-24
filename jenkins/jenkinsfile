@@ -27,9 +27,9 @@ pipeline {
                     script: "terraform output -raw instance_ip",
                     returnStdout: true
                 ).trim()
-                 writeFile file: '../ansible/inventory', text: """[vm] 
-                 vm ansible_host=${instance_ip} ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/id_rsa
-                 """
+                 writeFile file: '../ansible/inventory', text: """[vm]
+vm ansible_host=${instance_ip} ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/id_rsa
+"""
                         }
                 }
             }
