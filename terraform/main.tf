@@ -16,8 +16,8 @@ resource "google_compute_instance" "vm" {
   }
 
   network_interface {
-    network    = google_compute_network.vpc_network.id
-    subnetwork = google_compute_subnetwork.subnet.id
+    network    = data.google_compute_network.vpc_network.id
+    subnetwork = data.google_compute_subnetwork.subnet.id
     access_config {}
   }
 
@@ -27,19 +27,19 @@ resource "google_compute_instance" "vm" {
 }
 
 
-resource "google_compute_network" "vpc_network" {
+data "google_compute_network" "vpc_network" {
   name                    = var.vpc_name
   auto_create_subnetworks = false
 }
 
-resource "google_compute_subnetwork" "subnet" {
+data "google_compute_subnetwork" "subnet" {
   name          = var.subnet_name
   region        = var.region
   network       = google_compute_network.vpc_network.id
   ip_cidr_range = var.subnet_range
 }
 
-resource "google_compute_firewall" "allow_ssh" {
+data "google_compute_firewall" "allow_ssh" {
   name    = "allow-ssh"
   network = google_compute_network.vpc_network.id
 
