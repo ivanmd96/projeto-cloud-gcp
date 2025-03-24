@@ -25,13 +25,13 @@ variable "vpc_name" {
 variable "subnet_name" {
   description = "Nome da subrede"
   type        = string
-  default     = "subnet-projeto-cloud"
+  default     = "projeto-1"
 }
 
 variable "subnet_range" {
   description = "Faixa de IPs da subrede"
   type        = string
-  default     = "10.10.0.0/24"
+  default     = "192.168.100.0/24"
 }
 
 variable "vm_name" {
