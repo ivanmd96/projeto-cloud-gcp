@@ -35,13 +35,13 @@ data "google_compute_network" "vpc_network" {
 data "google_compute_subnetwork" "subnet" {
   name          = var.subnet_name
   region        = var.region
-  network       = google_compute_network.vpc_network.id
+  network       = data.google_compute_network.vpc_network.id
   ip_cidr_range = var.subnet_range
 }
 
 data "google_compute_firewall" "allow_ssh" {
   name    = "allow-ssh"
-  network = google_compute_network.vpc_network.id
+  network = data.google_compute_network.vpc_network.id
 
   allow {
     protocol = "tcp"
