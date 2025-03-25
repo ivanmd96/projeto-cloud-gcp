@@ -32,19 +32,17 @@ pipeline {
 
         stage('Gerar Inventory Ansible') {
             steps {
-                withCredentials([sshUserPrivateKey(credentialsId: 'vm-ssh-key', keyFileVariable: 'SSH_KEY')]) {
-                    dir('terraform') {
-                        script {
-                            def instance_ip = sh(
-                             script: "terraform output -raw instance_ip",
-                             returnStdout: true
-                            ).trim()
+                dir('terraform') {
+                    script {
+                        def instance_ip = sh(
+                          script: "terraform output -raw instance_ip",
+                          returnStdout: true
+                        ).trim()
 
-                            def inventoryContent = "[vm]\n" +
-                                           "vm ansible_host=${instance_ip} ansible_user=ubuntu ansible_ssh_private_key_file=${env.SSH_KEY}\n"
+                        def inventoryContent = "[vm]\n" +
+                                       "vm ansible_host=${instance_ip} ansible_user=ubuntu\n"
 
-                            writeFile file: '../ansible/inventory', text: inventoryContent
-                }
+                        writeFile file: '../ansible/inventory', text: inventoryContent
             }
         }
     }
@@ -52,15 +50,17 @@ pipeline {
 
 
 
+
         stage('Configurar Ansible') {
             steps {
                 withCredentials([sshUserPrivateKey(credentialsId: 'vm-ssh-key', keyFileVariable: 'SSH_KEY')]) {
-                    sh '''
+                 sh '''
                         cd ansible
                         ansible-playbook -i inventory playbook.yml --private-key $SSH_KEY
                     '''
-                }
-            }
         }
+    }
+}
+
     }
 }
