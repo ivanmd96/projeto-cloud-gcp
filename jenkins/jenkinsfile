@@ -36,19 +36,20 @@ pipeline {
                     dir('terraform') {
                         script {
                             def instance_ip = sh(
-                                script: "terraform output -raw instance_ip",
-                                returnStdout: true
+                             script: "terraform output -raw instance_ip",
+                             returnStdout: true
                             ).trim()
 
-                            // Gera o arquivo inventory dentro do bloco onde SSH_KEY existe
-                            writeFile file: '../ansible/inventory', text: """[vm]
-vm ansible_host=${instance_ip} ansible_user=ubuntu ansible_ssh_private_key_file=${SSH_KEY}
-"""
-                        }
-                    }
+                            def inventoryContent = "[vm]\n" +
+                                           "vm ansible_host=${instance_ip} ansible_user=ubuntu ansible_ssh_private_key_file=${env.SSH_KEY}\n"
+
+                            writeFile file: '../ansible/inventory', text: inventoryContent
                 }
             }
         }
+    }
+}
+
 
 
         stage('Configurar Ansible') {
