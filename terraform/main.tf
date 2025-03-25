@@ -1,5 +1,5 @@
 provider "google" {
-  credentials = file("terraform-key.json") # ou o caminho correto na sua máquina
+    credentials = file(var.credentials_file) # ou o caminho correto na sua máquina
   project     = var.project_id
   region      = var.region
 }

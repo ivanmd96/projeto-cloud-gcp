@@ -1,6 +1,12 @@
 pipeline {
     agent any
 
+    environment {
+        GOOGLE_PROJECT = 'projeto-cloud-estudo'
+        GOOGLE_REGION  = 'us-central1'
+        GOOGLE_ZONE    = 'us-central1-a'
+    }
+
     stages {
         stage('Checkout do Código') {
             steps {
@@ -8,36 +14,47 @@ pipeline {
             }
         }
 
-        stage('Terraform Init') {
+        stage('Terraform Init & Apply') {
             steps {
-                sh 'cd terraform && terraform init'
+                withCredentials([file(credentialsId: 'terraform-key', variable: 'GOOGLE_CREDENTIALS')]) {
+                    sh '''
+                        cd terraform
+                        terraform init -backend-config="credentials=$GOOGLE_CREDENTIALS"
+                        terraform apply -auto-approve \
+                          -var="credentials_file=$GOOGLE_CREDENTIALS" \
+                          -var="project_id=$GOOGLE_PROJECT" \
+                          -var="region=$GOOGLE_REGION" \
+                          -var="zone=$GOOGLE_ZONE"
+                    '''
+                }
             }
         }
 
-        stage('Terraform Apply') {
-            steps {
-                sh 'cd terraform && terraform apply -auto-approve'
-            }
-        }
         stage('Gerar Inventory Ansible') {
             steps {
                 dir('terraform') {
-                script {
-                    def instance_ip = sh(
-                    script: "terraform output -raw instance_ip",
-                    returnStdout: true
-                ).trim()
-writeFile file: '../ansible/inventory', text: """[vm]
-vm ansible_host=${instance_ip} ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/id_rsa
+                    script {
+                        def instance_ip = sh(
+                            script: "terraform output -raw instance_ip",
+                            returnStdout: true
+                        ).trim()
+
+                        writeFile file: '../ansible/inventory', text: """[vm]
+vm ansible_host=${instance_ip} ansible_user=ubuntu ansible_ssh_private_key_file=$SSH_KEY
 """
-                        }
+                    }
                 }
             }
         }
 
         stage('Configurar Ansible') {
             steps {
-                sh 'cd ansible && ansible-playbook playbook.yml'
+                withCredentials([sshUserPrivateKey(credentialsId: 'vm-ssh-key', keyFileVariable: 'SSH_KEY')]) {
+                    sh '''
+                        cd ansible
+                        ansible-playbook -i inventory playbook.yml --private-key $SSH_KEY
+                    '''
+                }
             }
         }
     }

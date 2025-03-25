@@ -57,3 +57,8 @@ variable "ssh_key_path" {
   type        = string
   default     = "chave.pub"
 }
+
+variable "credentials_file" {
+  description = "Caminho do arquivo de credenciais do GCP"
+  type        = string
+}
