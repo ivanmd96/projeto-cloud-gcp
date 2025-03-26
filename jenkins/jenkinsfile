@@ -28,7 +28,15 @@ pipeline {
 
         stage('Terraform Apply') {
             steps {
-                sh "cd terraform && terraform apply -var-file=environments/${env.AMBIENTE}.tfvars -auto-approve"
+                withCredentials([string(credentialsId: 'ssh-public-key', variable: 'SSH_PUB_KEY')]) {
+                    sh """
+                        cd terraform
+                        terraform apply \
+                          -var='ssh_public_key=$SSH_PUB_KEY' \
+                          -var-file=environments/${env.AMBIENTE}.tfvars \
+                          -auto-approve
+                    """
+                }
             }
         }
 

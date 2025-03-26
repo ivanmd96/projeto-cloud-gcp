@@ -13,6 +13,7 @@ module "vm" {
   zone             = var.zone
   subnetwork_id    = module.network.subnet_id  # ← valor vindo do output do módulo network
   network_id       = module.network.vpc_id      # ← valor vindo do output do módulo network
+  ssh_public_key   = var.ssh_public_key
 }
 
 module "network" {
