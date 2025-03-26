@@ -1,5 +1,5 @@
 provider "google" {
-  credentials = file(env.GOOGLE_CREDENTIALS) # ou o caminho correto na sua máquina
+  credentials = file(var.credentials_path) # ou o caminho correto na sua máquina
   project     = var.project_id
   region      = var.region
 }
