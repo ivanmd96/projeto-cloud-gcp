@@ -23,12 +23,12 @@ variable "ssh_key_path" {
   type        = string
 }
 
-variable "network" {
+variable "network_id" {
   description = "ID da VPC"
   type        = string
 }
 
-variable "subnetwork" {
+variable "subnetwork_id" {
   description = "ID da subrede"
   type        = string
 }

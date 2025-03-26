@@ -1,9 +1,11 @@
-data "google_compute_network" "vpc_network" {
+resource "google_compute_network" "vpc_network" {
   name                    = var.vpc_name
+  auto_create_subnetworks = false
 }
 
-data "google_compute_subnetwork" "subnet" {
+resource "google_compute_subnetwork" "subnet" {
   name          = var.subnet_name
+  ip_cidr_range = var.subnet_range
+  network       = google_compute_network.vpc_network.id
   region        = var.region
 }
-
