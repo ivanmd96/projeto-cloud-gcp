@@ -17,10 +17,11 @@ pipeline {
         stage('Terraform Init & Apply') {
             steps {
                 withCredentials([file(credentialsId: 'terraform-key', variable: 'GOOGLE_CREDENTIALS')]) {
+                    def ambiente = env.BRANCH_NAME == 'main' ? 'prod' : 'dev'
                     sh '''
                         cd terraform
                         terraform init -backend-config="credentials=$GOOGLE_CREDENTIALS"
-                        terraform apply -auto-approve \
+                        terraform apply -var-file="environments/dev.tfvars" -auto-approve \
                           -var="credentials_file=$GOOGLE_CREDENTIALS" \
                           -var="project_id=$GOOGLE_PROJECT" \
                           -var="region=$GOOGLE_REGION" \
