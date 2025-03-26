@@ -24,7 +24,7 @@ module "network" {
 }
 
 module "firewall" {
-  source  = "./modules/firewall"
-  network = module.network.vpc_id
+  source     = "./modules/firewall"
+  network_id = module.network.vpc_id
 }
 
