@@ -21,7 +21,6 @@ module "network" {
   subnet_name   = var.subnet_name
   subnet_range  = var.subnet_range
   region        = var.region
-  project_id    = var.project_id
 }
 
 module "firewall" {
