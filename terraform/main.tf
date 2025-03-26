@@ -9,7 +9,7 @@ module "vm" {
   vm_name          = var.vm_name
   machine_type     = var.machine_type
   vm_image         = var.vm_image
-  sh_public_key     = var.sh_public_key
+  ssh_public_key    = var.ssh_public_key
   zone             = var.zone
   subnetwork_id    = module.network.subnet_id  # ← valor vindo do output do módulo network
   network_id       = module.network.vpc_id      # ← valor vindo do output do módulo network
