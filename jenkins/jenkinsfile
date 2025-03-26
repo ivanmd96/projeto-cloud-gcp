@@ -28,7 +28,10 @@ pipeline {
 
         stage('Terraform Apply') {
             steps {
-                withCredentials([string(credentialsId: 'ssh-public-key', variable: 'SSH_PUB_KEY')]) {
+                withCredentials([
+                    string(credentialsId: 'ssh-public-key', variable: 'SSH_PUB_KEY'),
+                    file(credentialsId: 'terraform-key', variable: 'GOOGLE_CREDENTIALS')
+                ]) {
                     sh """
                         cd terraform
                         terraform apply \
