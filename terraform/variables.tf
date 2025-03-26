@@ -58,7 +58,3 @@ variable "ssh_public_key" {
 }
 
 
-variable "credentials_file" {
-  description = "Caminho do arquivo de credenciais do GCP"
-  type        = string
-}
