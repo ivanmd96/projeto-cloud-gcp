@@ -18,8 +18,8 @@ variable "vm_image" {
   type        = string
 }
 
-variable "ssh_key_path" {
-  description = "Caminho da chave SSH pública"
+variable "ssh_public_key" {
+  description = "Conteúdo da chave pública SSH"
   type        = string
 }
 
