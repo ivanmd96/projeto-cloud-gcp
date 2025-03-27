@@ -21,3 +21,8 @@ variable "subnet_range" {
   type        = string
   default     = "192.168.100.0/24"
 }
+
+variable "vpc_self_link" {
+  description = "Self link da VPC já existente"
+  type        = string
+}
