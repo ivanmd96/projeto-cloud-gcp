@@ -1,7 +1,7 @@
 project_id       = "projeto-cloud-estudo"
 region           = "us-central1"
 zone             = "us-central1-a"
-vpc_name         = "vpc-prod"
+vpc_name         = "projeto-cloud"
 subnet_name      = "subnet-prod"
 subnet_range     = "192.168.20.0/24"
 vm_name          = "vm-prod"

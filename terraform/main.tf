@@ -15,16 +15,8 @@ module "vm" {
   ssh_public_key   = var.ssh_public_key
 }
 
-module "network" {
-  source        = "./modules/network"
-  vpc_name      = var.vpc_name
-  subnet_name   = var.subnet_name
-  subnet_range  = var.subnet_range
-  region        = var.region
+data "google_compute_subnetwork" "subnet" {
+  name   = var.subnet_name
+  region = var.region
+  project = var.project_id
 }
-
-module "firewall" {
-  source     = "./modules/firewall"
-  network_id = module.network.vpc_id
-}
-
