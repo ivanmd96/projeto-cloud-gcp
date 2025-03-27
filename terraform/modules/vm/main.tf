@@ -10,8 +10,8 @@ resource "google_compute_instance" "vm" {
   }
 
   network_interface {
-    network    = var.network_id       # ← recebido do módulo principal
-    subnetwork = var.subnetwork_id    # ← recebido do módulo principal
+    network    = data.google_compute_network.vpc_network.id      # ← recebido do módulo principal
+    subnetwork = data.google_compute_subnetwork.subnet.id    # ← recebido do módulo principal
     access_config {}
   }
 
