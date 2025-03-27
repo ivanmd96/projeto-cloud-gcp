@@ -22,9 +22,9 @@ data "google_compute_network" "vpc_network" {
 
 # Criação da sub-rede baseada no ambiente
 module "network" {
-  source        = "./modules/network"
-  vpc_name      = var.vpc_name
-  subnet_name   = var.subnet_name
-  subnet_range  = var.subnet_range
-  region        = var.region
+  source         = "./modules/network"
+  subnet_name    = var.subnet_name
+  subnet_range   = var.subnet_range
+  region         = var.region
+  vpc_self_link  = data.google_compute_network.vpc_network.self_link  # <-- Passando o self_link
 }

@@ -9,11 +9,11 @@ resource "google_compute_instance" "vm" {
     }
   }
 
-  network_interface {
-    network    = var.network_id     # ← recebido do módulo principal
-    subnetwork = var.subnetwork_id    # ← recebido do módulo principal
-    access_config {}
-  }
+network_interface {
+  network    = var.network_id       # já existente
+  subnetwork = var.subnetwork_id    # já existente
+  access_config {}
+}
 
   metadata = {
     ssh-keys = "ubuntu:${var.ssh_public_key}"

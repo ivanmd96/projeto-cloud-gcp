@@ -24,7 +24,7 @@ variable "ssh_public_key" {
 }
 
 variable "network_id" {
-  description = "ID da VPC"
+  description = "ID da rede"
   type        = string
 }
 
