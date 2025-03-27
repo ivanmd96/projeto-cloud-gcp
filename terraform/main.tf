@@ -10,7 +10,7 @@ module "vm" {
   machine_type     = var.machine_type
   vm_image         = var.vm_image
   zone             = var.zone
-  subnetwork_id    = data.google_compute_subnetwork.subnet.id  # ← valor vindo do output do módulo network
+  subnetwork_id    = module.network.subnet_id  # ← valor vindo do output do módulo network
   network_id       = data.google_compute_network.vpc_network.id    # ← valor vindo do output do módulo network
   ssh_public_key   = var.ssh_public_key
 }
