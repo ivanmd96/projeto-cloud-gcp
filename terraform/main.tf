@@ -24,5 +24,4 @@ data "google_compute_network" "vpc_network" {
 data "google_compute_subnetwork" "subnet" {
   name          = var.subnet_name
   region        = var.region
-  network       = data.google_compute_network.vpc_network.id
 }
