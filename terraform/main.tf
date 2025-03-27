@@ -10,7 +10,7 @@ module "vm" {
   machine_type     = var.machine_type
   vm_image         = var.vm_image
   zone             = var.zone
-  subnetwork_id    = data.google_compute_subnetwork.custom_subnet.id  # ← valor vindo do output do módulo network
+  subnetwork_id    = data.google_compute_subnetwork.subnet.id  # ← valor vindo do output do módulo network
   network_id       = data.google_compute_network.vpc_network.id    # ← valor vindo do output do módulo network
   ssh_public_key   = var.ssh_public_key
 }
@@ -21,7 +21,7 @@ data "google_compute_network" "vpc_network" {
 }
 
 # Criação da sub-rede baseada no ambiente
-data "google_compute_subnetwork" "custom_subnet" {
+data "google_compute_subnetwork" "subnet" {
   name          = var.subnet_name
   ip_cidr_range = var.subnet_range
   region        = var.region
