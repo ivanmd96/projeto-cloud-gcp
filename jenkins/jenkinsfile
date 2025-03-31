@@ -44,12 +44,12 @@ pipeline {
                 withCredentials([
                     file(credentialsId: 'terraform-key', variable: 'GOOGLE_APPLICATION_CREDENTIALS')
              ]) {
-                  dir("terraform/environments/${env.AMBIENTE}") {
+                  dir("terraform/environments/$AMBIENTE") {
                      sh """
                            terraform init \
                              -backend-config="credentials=${GOOGLE_APPLICATION_CREDENTIALS}" \
                              -backend-config="bucket=terraform-state-projeto-cloud" \
-                            -backend-config="prefix=env/${env.AMBIENTE}"
+                             -backend-config="prefix=env/$AMBIENTE"
                        """
             }
         }
@@ -58,7 +58,7 @@ pipeline {
 
         stage('Validar Terraform') {
             steps {
-                dir("terraform/environments/${env.AMBIENTE}") {
+                dir("terraform/environments/$AMBIENTE") {
                     sh 'terraform fmt -check'
                     sh 'terraform validate'
                 }
@@ -71,13 +71,13 @@ pipeline {
                     string(credentialsId: 'ssh-public-key', variable: 'SSH_PUB_KEY'),
                     file(credentialsId: 'terraform-key', variable: 'GOOGLE_CREDENTIALS')
                 ]) {
-                    dir("terraform/environments/${env.AMBIENTE}") {
+                    dir("terraform/environments/$AMBIENTE") {
                         sh """
                             pwd && ls -la 
                             terraform apply \
                               -var='ssh_public_key=$SSH_PUB_KEY' \
                               -var="credentials_path=$GOOGLE_CREDENTIALS" \
-                              -var-file="terraform/environments/${env.AMBIENTE}.tfvars" \
+                              -var-file="terraform/environments/$AMBIENTE.tfvars" \
                               -auto-approve
                         """
                     }
@@ -87,7 +87,7 @@ pipeline {
 
         stage('Gerar Inventory Ansible') {
             steps {
-                dir("terraform/environments/${env.AMBIENTE}") {
+                dir("terraform/environments/$AMBIENTE") {
                     script {
                         def instance_ip = sh(
                             script: "terraform output -raw instance_ip",
