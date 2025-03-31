@@ -71,14 +71,14 @@ pipeline {
                     string(credentialsId: 'ssh-public-key', variable: 'SSH_PUB_KEY'),
                     file(credentialsId: 'terraform-key', variable: 'GOOGLE_CREDENTIALS')
                 ]) {
-                    dir("terraform/environments/$AMBIENTE") {
+                    dir("terraform") {
                         sh 'echo "Arquivo de credenciais: $GOOGLE_CREDENTIALS" && cat $GOOGLE_CREDENTIALS'
                         sh """
                             pwd && ls -la 
                             terraform apply \
                               -var='ssh_public_key=$SSH_PUB_KEY' \
                               -var="credentials_path=$GOOGLE_CREDENTIALS" \
-                              -var-file="${AMBIENTE}.tfvars" \
+                              -var-file="environments/$AMBIENTE/${AMBIENTE}.tfvars" \
                               -auto-approve
                         """
                     }
