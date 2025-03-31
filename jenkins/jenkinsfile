@@ -95,12 +95,6 @@ pipeline {
                 ]) {
                     dir("terraform") {
                         sh """
-                            terraform plan \
-                                -var="create_bucket=false" \
-                                -var="ssh_public_key=$SSH_PUB_KEY" \
-                                -var="credentials_path=$GOOGLE_CREDENTIALS" \
-                                -var-file="environments/$AMBIENTE/${AMBIENTE}.tfvars"
-                            
                             terraform apply \
                                 -auto-approve \
                                 -var="create_bucket=false" \
