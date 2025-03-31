@@ -27,12 +27,17 @@ pipeline {
                 ]) {
                     dir('terraform') {
                       // Tenta importar apenas se não estiver no state
-                     sh '''
-                        terraform state list | grep module.bucket.google_storage_bucket.terraform_state[0] || \
-                        terraform import \
-                            'module.bucket.google_storage_bucket.terraform_state[0]' \
-                        terraform-state-projeto-cloud
-                        '''
+                     sh """
+                            terraform state list | grep module.bucket.google_storage_bucket.terraform_state\\[0\\] || \
+                            terraform import \
+                                -var='ssh_public_key=$SSH_PUB_KEY' \
+                                -var='credentials_path=$GOOGLE_CREDENTIALS' \
+                                -var='bucket_name=terraform-state-projeto-cloud' \
+                                -var='bucket_location=US' \
+                                'module.bucket.google_storage_bucket.terraform_state[0]' \
+                            terraform-state-projeto-cloud
+                        """
+
                   }
              }
           }
