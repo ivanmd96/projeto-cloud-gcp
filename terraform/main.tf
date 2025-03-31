@@ -30,6 +30,7 @@ module "network" {
 }
 
 module "bucket" {
+  count = var.create_bucket ? 1 : 0
   source          = "./modules/bucket"
   bucket_name     = "terraform-state-projeto-cloud"
   bucket_location = "US"

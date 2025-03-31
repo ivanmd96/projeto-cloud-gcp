@@ -72,3 +72,8 @@ variable "bucket_location" {
   type        = string
 }
 
+
+variable "create_bucket" {
+  type    = bool
+  default = true
+}
