@@ -24,16 +24,17 @@ pipeline {
             steps {
                 withCredentials([
                     file(credentialsId: 'terraform-key', variable: 'GOOGLE_CREDENTIALS')
-                ]) 
-                dir('terraform') {
-                    sh '''
-                        terraform init -backend=false
-                        terraform apply -target=module.bucket -auto-approve \
-                            -var="bucket_name=terraform-state-projeto-cloud" \
-                            -var="bucket_location=US" \
-                            -var="credentials_path=$GOOGLE_CREDENTIALS" \
-                            -var="ssh_public_key="
-                    '''
+                ]) {
+                    dir('terraform') {
+                        sh '''
+                         terraform init -backend=false
+                         terraform apply -target=module.bucket -auto-approve \
+                               -var="bucket_name=terraform-state-projeto-cloud" \
+                              -var="bucket_location=US" \
+                              -var="credentials_path=$GOOGLE_CREDENTIALS" \
+                              -var="ssh_public_key="
+                     '''
+                    }
                 }
             }
         }
