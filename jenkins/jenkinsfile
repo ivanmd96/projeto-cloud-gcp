@@ -28,7 +28,8 @@ pipeline {
                         terraform apply -target=module.bucket -auto-approve \
                             -var="bucket_name=terraform-state-projeto-cloud" \
                             -var="bucket_location=US" \
-                            -var="credentials_path=$GOOGLE_APPLICATION_CREDENTIALS"
+                            -var="credentials_path=$GOOGLE_APPLICATION_CREDENTIALS" \
+                            -var="ssh_public_key="
                     '''
                 }
             }
