@@ -8,3 +8,8 @@ variable "bucket_location" {
   type        = string
   default     = "US"
 }
+
+variable "create_bucket" {
+  type    = bool
+  default = true
+}
