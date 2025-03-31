@@ -9,7 +9,7 @@ pipeline {
         stage('Definir Ambiente') {
             steps {
                 script {
-                    env.AMBIENTE = (env.BRANCH_NAME == 'main') ? 'prod' : 'dev'
+                    env.AMBIENTE = (env.BRANCH_NAME == 'main') ? 'prd' : 'dev'
                 }
             }
         }
@@ -29,24 +29,30 @@ pipeline {
                             -var="bucket_name=terraform-state-projeto-cloud" \
                             -var="bucket_location=US" \
                             -var="credentials_path=$GOOGLE_APPLICATION_CREDENTIALS"
-            '''
-                 }
-             }
+                    '''
+                }
+            }
         }
 
         stage('Terraform Init') {
             steps {
-                sh "cd terraform 
-                sh ""terraform init -backend-config="credentials=${env.GOOGLE_APPLICATION_CREDENTIALS}" \\
-                       -backend-config="bucket=terraform-state-projeto-cloud" \\
-                       -backend-config="prefix=env/${env.AMBIENTE}""
+                dir("terraform/environments/${env.AMBIENTE}") {
+                    sh """
+                        terraform init \
+                          -backend-config="credentials=${env.GOOGLE_APPLICATION_CREDENTIALS}" \
+                          -backend-config="bucket=terraform-state-projeto-cloud" \
+                          -backend-config="prefix=env/${env.AMBIENTE}"
+                    """
+                }
             }
         }
-        
+
         stage('Validar Terraform') {
             steps {
-                sh 'cd terraform && terraform fmt -check'
-                sh 'cd terraform && terraform validate'
+                dir("terraform/environments/${env.AMBIENTE}") {
+                    sh 'terraform fmt -check'
+                    sh 'terraform validate'
+                }
             }
         }
 
@@ -56,28 +62,29 @@ pipeline {
                     string(credentialsId: 'ssh-public-key', variable: 'SSH_PUB_KEY'),
                     file(credentialsId: 'terraform-key', variable: 'GOOGLE_CREDENTIALS')
                 ]) {
-                    sh """
-                        cd terraform
-                        terraform apply \
-                          -var='ssh_public_key=$SSH_PUB_KEY' \
-                          -var-file=environments/${env.AMBIENTE}.tfvars \
-                          -var="credentials_path=$GOOGLE_CREDENTIALS" \
-                          -auto-approve
-                    """
+                    dir("terraform/environments/${env.AMBIENTE}") {
+                        sh """
+                            terraform apply \
+                              -var='ssh_public_key=$SSH_PUB_KEY' \
+                              -var="credentials_path=$GOOGLE_CREDENTIALS" \
+                              -var-file="${env.AMBIENTE}.tfvars" \
+                              -auto-approve
+                        """
+                    }
                 }
             }
         }
 
         stage('Gerar Inventory Ansible') {
             steps {
-                dir('terraform') {
+                dir("terraform/environments/${env.AMBIENTE}") {
                     script {
                         def instance_ip = sh(
                             script: "terraform output -raw instance_ip",
                             returnStdout: true
                         ).trim()
 
-                        writeFile file: '../ansible/inventory', text: """[vm]
+                        writeFile file: "../../../ansible/inventory", text: """[vm]
 vm ansible_host=${instance_ip} ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/id_rsa
 """
                     }
@@ -87,7 +94,9 @@ vm ansible_host=${instance_ip} ansible_user=ubuntu ansible_ssh_private_key_file=
 
         stage('Configurar Ansible') {
             steps {
-                sh 'cd ansible && ansible-playbook -i inventory playbook.yml --check'
+                dir('ansible') {
+                    sh 'ansible-playbook -i inventory playbook.yml --check'
+                }
             }
         }
     }
