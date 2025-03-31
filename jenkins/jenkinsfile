@@ -20,9 +20,33 @@ pipeline {
             }
         }
 
+        stage('Criar Bucket do Backend (se necessário)') {
+            steps {
+                dir('terraform') {
+                    sh '''
+                        terraform init -backend=false
+                        terraform apply -target=module.bucket -auto-approve \
+                            -var="bucket_name=terraform-state-projeto-cloud" \
+                            -var="bucket_location=US" \
+                            -var="credentials_path=$GOOGLE_APPLICATION_CREDENTIALS"
+            '''
+                 }
+             }
+        }
+
         stage('Terraform Init') {
             steps {
-                sh "cd terraform && terraform init"
+                sh "cd terraform 
+                sh ""terraform init -backend-config="credentials=${env.GOOGLE_APPLICATION_CREDENTIALS}" \\
+                       -backend-config="bucket=terraform-state-projeto-cloud" \\
+                       -backend-config="prefix=env/${env.AMBIENTE}""
+            }
+        }
+        
+        stage('Validar Terraform') {
+            steps {
+                sh 'cd terraform && terraform fmt -check'
+                sh 'cd terraform && terraform validate'
             }
         }
 
@@ -63,7 +87,7 @@ vm ansible_host=${instance_ip} ansible_user=ubuntu ansible_ssh_private_key_file=
 
         stage('Configurar Ansible') {
             steps {
-                sh 'cd ansible && ansible-playbook -i inventory playbook.yml'
+                sh 'cd ansible && ansible-playbook -i inventory playbook.yml --check'
             }
         }
     }
