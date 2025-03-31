@@ -94,16 +94,17 @@ pipeline {
                  file(credentialsId: 'terraform-key', variable: 'GOOGLE_CREDENTIALS')
                 ]) {
                  dir("terraform") {
-                        sh """
+                        sh '''
                             terraform apply \
                                 -auto-approve \
-                                -var="create_bucket=false" \  
+                                -var="create_bucket=false" \
                                 -var="bucket_name=terraform-state-projeto-cloud" \
                                 -var="bucket_location=US" \
                                 -var="ssh_public_key=$SSH_PUB_KEY" \
                                 -var="credentials_path=$GOOGLE_CREDENTIALS" \
                                 -var-file="environments/$AMBIENTE/${AMBIENTE}.tfvars"
-                        """
+                            '''
+
                     }
                 }
             }
