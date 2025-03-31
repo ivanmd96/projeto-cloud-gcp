@@ -20,26 +20,27 @@ pipeline {
             }
         }
 
-        stage('Criar Bucket do Backend (se necessário)') {
+        stage('Importar Bucket (se necessário)') {
             steps {
                 withCredentials([
                     file(credentialsId: 'terraform-key', variable: 'GOOGLE_CREDENTIALS')
                 ]) {
                     dir('terraform') {
-                        sh '''
-                            terraform init -backend=false
-                            terraform apply -auto-approve \
-                                -target=module.bucket \
-                                -var="create_bucket=true" \
-                                -var="bucket_name=terraform-state-projeto-cloud" \
-                                -var="bucket_location=US" \
-                                -var="credentials_path=$GOOGLE_CREDENTIALS" \
-                                -var="ssh_public_key="
-                        '''
-                    }
-                }
-            }
+                      // Tenta importar apenas se não estiver no state
+                     sh '''
+                     terraform state list | grep 'module.bucket.google_storage_bucket.terraform_state[0]' || \
+                     terraform import \
+                           -var="bucket_location=US" \
+                          -var="bucket_name=terraform-state-projeto-cloud" \
+                         -var="credentials_path=$GOOGLE_CREDENTIALS" \
+                          'module.bucket.google_storage_bucket.terraform_state[0]' \
+                           terraform-state-projeto-cloud
+                       '''
+                  }
+             }
+          }
         }
+
 
         stage('Terraform Init') {
             steps {
