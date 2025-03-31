@@ -62,4 +62,13 @@ variable "credentials_path" {
   type        = string
 }
 
+variable "bucket_name" {
+  description = "Nome do bucket GCS para armazenamento"
+  type        = string
+}
+
+variable "bucket_location" {
+  description = "Região do bucket GCS"
+  type        = string
+}
 
