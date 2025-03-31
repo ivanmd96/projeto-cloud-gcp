@@ -28,7 +28,7 @@ pipeline {
                     dir('terraform') {
                         sh '''
                          terraform init -backend=false
-                         terraform apply -target=module.bucket -auto-approve \
+                         terraform apply -auto-approve \
                                -var="bucket_name=terraform-state-projeto-cloud" \
                               -var="bucket_location=US" \
                               -var="credentials_path=$GOOGLE_CREDENTIALS" \
