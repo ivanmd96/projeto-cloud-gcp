@@ -46,7 +46,7 @@ pipeline {
              ]) {
                   dir("terraform/environments/$AMBIENTE") {
                      sh """
-                           terraform init -migrate-state \
+                           terraform init -reconfigure \
                              -backend-config="credentials=${GOOGLE_APPLICATION_CREDENTIALS}" \
                              -backend-config="bucket=terraform-state-projeto-cloud" \
                              -backend-config="prefix=env/$AMBIENTE"
