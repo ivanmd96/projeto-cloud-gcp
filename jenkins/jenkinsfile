@@ -29,7 +29,8 @@ pipeline {
                         sh '''
                          terraform init -backend=false
                          terraform apply -auto-approve \
-                               -var="bucket_name=terraform-state-projeto-cloud" \
+                              -var="create_bucket=true" \
+                              -var="bucket_name=terraform-state-projeto-cloud" \
                               -var="bucket_location=US" \
                               -var="credentials_path=$GOOGLE_CREDENTIALS" \
                               -var="ssh_public_key="
@@ -44,7 +45,7 @@ pipeline {
                 withCredentials([
                     file(credentialsId: 'terraform-key', variable: 'GOOGLE_APPLICATION_CREDENTIALS')
              ]) {
-                  dir("terraform/environments/$AMBIENTE") {
+                  dir("terraform") {
                      sh """
                            terraform init -reconfigure \
                              -backend-config="credentials=${GOOGLE_APPLICATION_CREDENTIALS}" \
@@ -58,7 +59,7 @@ pipeline {
 
         stage('Validar Terraform') {
             steps {
-                dir("terraform/environments/$AMBIENTE") {
+                dir("terraform") {
                     sh 'terraform fmt -recursive -diff'
                     sh 'terraform validate'
                 }
