@@ -23,6 +23,7 @@ pipeline {
         stage('Importar Bucket (se necessário)') {
             steps {
                 withCredentials([
+                    string(credentialsId: 'ssh-public-key', variable: 'SSH_PUB_KEY'),
                     file(credentialsId: 'terraform-key', variable: 'GOOGLE_CREDENTIALS')
                 ]) {
                     dir('terraform') {
