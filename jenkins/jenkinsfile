@@ -41,16 +41,20 @@ pipeline {
 
         stage('Terraform Init') {
             steps {
-                dir("terraform/environments/${env.AMBIENTE}") {
-                    sh """
-                        terraform init \
-                          -backend-config="credentials=${env.GOOGLE_APPLICATION_CREDENTIALS}" \
-                          -backend-config="bucket=terraform-state-projeto-cloud" \
-                          -backend-config="prefix=env/${env.AMBIENTE}"
-                    """
-                }
+                withCredentials([
+                    file(credentialsId: 'terraform-key', variable: 'GOOGLE_APPLICATION_CREDENTIALS')
+             ]) {
+                  dir("terraform/environments/${env.AMBIENTE}") {
+                     sh """
+                           terraform init \
+                             -backend-config="credentials=${GOOGLE_APPLICATION_CREDENTIALS}" \
+                             -backend-config="bucket=terraform-state-projeto-cloud" \
+                            -backend-config="prefix=env/${env.AMBIENTE}"
+                       """
             }
         }
+    }
+}
 
         stage('Validar Terraform') {
             steps {
