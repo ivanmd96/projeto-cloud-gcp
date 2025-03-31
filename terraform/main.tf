@@ -28,10 +28,3 @@ module "network" {
   region         = var.region
   vpc_self_link  = data.google_compute_network.vpc_network.self_link  # <-- Passando o self_link
 }
-
-module "bucket" {
-  count = var.create_bucket ? 1 : 0
-  source          = "./modules/bucket"
-  bucket_name     = "terraform-state-projeto-cloud"
-  bucket_location = "US"
-}
