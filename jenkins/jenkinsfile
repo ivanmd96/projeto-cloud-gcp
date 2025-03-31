@@ -72,7 +72,7 @@ pipeline {
                             terraform apply \
                               -var='ssh_public_key=$SSH_PUB_KEY' \
                               -var="credentials_path=$GOOGLE_CREDENTIALS" \
-                              -var-file="${env.AMBIENTE}.tfvars" \
+                              -var-file="terraform/environments/${env.AMBIENTE}.tfvars" \
                               -auto-approve
                         """
                     }
