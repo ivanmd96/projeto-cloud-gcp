@@ -30,9 +30,10 @@ pipeline {
                      sh '''
                      terraform state list | grep 'module.bucket.google_storage_bucket.terraform_state[0]' || \
                      terraform import \
-                           -var="bucket_location=US" \
+                          -var="ssh_public_key="
+                          -var="bucket_location=US" \
                           -var="bucket_name=terraform-state-projeto-cloud" \
-                         -var="credentials_path=$GOOGLE_CREDENTIALS" \
+                          -var="credentials_path=$GOOGLE_CREDENTIALS" \
                           'module.bucket.google_storage_bucket.terraform_state[0]' \
                            terraform-state-projeto-cloud
                        '''
