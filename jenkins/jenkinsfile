@@ -69,7 +69,7 @@ pipeline {
                 ]) {
                     dir("terraform/environments/${env.AMBIENTE}") {
                         sh """
-                            pwd $$ ls -la
+                            pwd && ls -la 
                             terraform apply \
                               -var='ssh_public_key=$SSH_PUB_KEY' \
                               -var="credentials_path=$GOOGLE_CREDENTIALS" \
