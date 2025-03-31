@@ -74,6 +74,7 @@ pipeline {
                     dir("terraform") {
                         sh 'echo "Arquivo de credenciais: $GOOGLE_CREDENTIALS" && cat $GOOGLE_CREDENTIALS'
                         sh """
+                            terraform plan -var-file=/$AMBIENTE/dev.tfvars
                             pwd && ls -la 
                             terraform apply \
                               -var="create_bucket=false"\
