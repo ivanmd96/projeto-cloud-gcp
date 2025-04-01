@@ -24,3 +24,8 @@ variable "create_subnet" {
 variable "subnet_range" {
   type = string
 }
+
+variable "vpc_self_link" {
+  description = "Self link da VPC já existente"
+  type        = string
+}

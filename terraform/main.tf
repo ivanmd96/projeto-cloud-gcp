@@ -27,4 +27,5 @@ module "network" {
   region         = var.region
   subnet_range   = var.subnet_range         # ← novo
   create_subnet  = var.create_subnet        # ← novo
+  vpc_self_link  = data.google_compute_network.vpc_network.id
 }
