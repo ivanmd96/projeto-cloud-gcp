@@ -61,4 +61,3 @@ variable "credentials_path" {
   description = "Caminho do arquivo de credenciais do GCP passado via Jenkins"
   type        = string
 }
-
