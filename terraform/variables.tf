@@ -40,19 +40,16 @@ variable "subnet_range" {
 variable "vm_name" {
   description = "Nome da VM"
   type        = string
-  default     = "vm-projeto-cloud"
 }
 
 variable "machine_type" {
   description = "Tipo da máquina"
   type        = string
-  default     = "e2-medium"
 }
 
 variable "vm_image" {
   description = "Imagem do SO da VM"
   type        = string
-  default     = "ubuntu-os-cloud/ubuntu-2004-lts"
 }
 
 variable "ssh_public_key" {
