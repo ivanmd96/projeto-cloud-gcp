@@ -16,10 +16,6 @@ variable "subnet_name" {
   default     = "projeto-1"
 }
 
-output "subnet_id" {
-  value = var.create_subnet ? google_compute_subnetwork.subnet[0].id : null
-}
-
 variable "create_subnet" {
   type    = bool
   default = true
