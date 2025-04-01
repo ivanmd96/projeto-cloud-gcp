@@ -102,7 +102,4 @@ Se os recursos já existirem, **nada será recriado**.
 - Adicionar mais serviços (ex: CloudSQL, GKE).
 - Implementar notificações via Slack ou email no Jenkins.
 
-## 👨‍💻 Autor
-
-Projeto criado por [Seu Nome].  
 Infraestrutura GCP automatizada com foco em **boas práticas**, **idempotência** e **modularização**.
