@@ -28,6 +28,14 @@ variable "subnet_name" {
   default     = "projeto-1"
 }
 
+variable "create_subnet" {
+  type    = bool
+  default = true
+}
+
+variable "subnet_range" {
+  type = string
+}
 
 variable "vm_name" {
   description = "Nome da VM"
@@ -56,3 +64,4 @@ variable "credentials_path" {
   description = "Caminho do arquivo de credenciais do GCP passado via Jenkins"
   type        = string
 }
+

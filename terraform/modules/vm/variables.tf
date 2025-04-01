@@ -32,3 +32,5 @@ variable "subnetwork_id" {
   description = "ID da subrede"
   type        = string
 }
+
+

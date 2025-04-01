@@ -25,4 +25,6 @@ module "network" {
   source         = "./modules/network"
   subnet_name    = var.subnet_name
   region         = var.region
+  subnet_range   = var.subnet_range         # ← novo
+  create_subnet  = var.create_subnet        # ← novo
 }
