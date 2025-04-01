@@ -2,65 +2,115 @@ pipeline {
     agent any
 
     environment {
-        GOOGLE_PROJECT = 'projeto-cloud-estudo'
-        GOOGLE_REGION  = 'us-central1'
-        GOOGLE_ZONE    = 'us-central1-a'
+        GOOGLE_APPLICATION_CREDENTIALS = "${WORKSPACE}/terraform/terraform-key.json"
     }
 
     stages {
-        stage('Checkout do Código') {
+        stage('Definir Ambiente') {
             steps {
-                git branch: 'main', credentialsId: 'github-cred', url: 'git@github.com:ivanmd96/projeto-cloud-gcp.git'
+                script {
+                    env.AMBIENTE = (env.BRANCH_NAME == 'main') ? 'prd' : 'dev'
+                }
             }
         }
 
-        stage('Terraform Init & Apply') {
+        stage('Checkout do Código') {
             steps {
-                withCredentials([file(credentialsId: 'terraform-key', variable: 'GOOGLE_CREDENTIALS')]) {
-                    sh '''
-                        cd terraform
-                        terraform init -backend-config="credentials=$GOOGLE_CREDENTIALS"
-                        terraform apply -auto-approve \
-                          -var="credentials_file=$GOOGLE_CREDENTIALS" \
-                          -var="project_id=$GOOGLE_PROJECT" \
-                          -var="region=$GOOGLE_REGION" \
-                          -var="zone=$GOOGLE_ZONE"
-                    '''
+                git branch: env.BRANCH_NAME, credentialsId: 'github-cred', url: 'git@github.com:ivanmd96/projeto-cloud-gcp.git'
+            }
+        }
+
+        stage('Terraform Init') {
+            steps {
+                withCredentials([
+                    file(credentialsId: 'terraform-key', variable: 'GOOGLE_APPLICATION_CREDENTIALS')
+                ]) {
+                    dir("terraform") {
+                        sh """
+                            terraform init -reconfigure \
+                                -backend-config="credentials=${GOOGLE_APPLICATION_CREDENTIALS}" \
+                                -backend-config="bucket=terraform-state-projeto-cloud" \
+                                -backend-config="prefix=env/$AMBIENTE"
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Validar Terraform') {
+            steps {
+                dir("terraform") {
+                    sh 'terraform fmt -recursive -diff'
+                    sh 'terraform validate'
+                }
+            }
+        }
+
+        stage('Importar VM (se necessário)') {
+            steps {
+                withCredentials([
+                    string(credentialsId: 'ssh-public-key', variable: 'SSH_PUB_KEY'),
+                    file(credentialsId: 'terraform-key', variable: 'GOOGLE_CREDENTIALS')
+                ]) {
+                    dir("terraform") {
+                        sh '''
+                            terraform state list | grep "module.vm.google_compute_instance.vm" || \
+                            terraform import \
+                                -var="ssh_public_key=$SSH_PUB_KEY" \
+                                -var="credentials_path=$GOOGLE_CREDENTIALS" \
+                                -var-file="environments/$AMBIENTE/${AMBIENTE}.tfvars" \
+                                module.vm.google_compute_instance.vm \
+                                projects/projeto-cloud-estudo/zones/us-central1-a/instances/vm-$AMBIENTE
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Terraform Apply') {
+            steps {
+                withCredentials([
+                 string(credentialsId: 'ssh-public-key', variable: 'SSH_PUB_KEY'),
+                 file(credentialsId: 'terraform-key', variable: 'GOOGLE_CREDENTIALS')
+                ]) {
+                 dir("terraform") {
+                        sh '''
+                            terraform output -raw instance_ip
+                            terraform apply \
+                                -auto-approve \
+                                -var="ssh_public_key=$SSH_PUB_KEY" \
+                                -var="credentials_path=$GOOGLE_CREDENTIALS" \
+                                -var-file="environments/$AMBIENTE/${AMBIENTE}.tfvars"
+                            '''
+
+                    }
                 }
             }
         }
 
         stage('Gerar Inventory Ansible') {
             steps {
-                dir('terraform') {
+                dir("terraform") {
                     script {
                         def instance_ip = sh(
-                          script: "terraform output -raw instance_ip",
-                          returnStdout: true
+                            script: "terraform output -raw instance_ip",
+                            returnStdout: true
                         ).trim()
 
-                        def inventoryContent = "[vm]\n" +
-                                       "vm ansible_host=${instance_ip} ansible_user=ubuntu\n"
-
-                        writeFile file: '../ansible/inventory', text: inventoryContent
+                        writeFile file: "../ansible/inventory", text: """[vm]
+vm_$AMBIENTE ansible_host=${instance_ip} ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/id_rsa
+"""
+                    }
+                }
             }
         }
-    }
-}
-
-
-
 
         stage('Configurar Ansible') {
             steps {
-                withCredentials([sshUserPrivateKey(credentialsId: 'vm-ssh-key', keyFileVariable: 'SSH_KEY')]) {
-                 sh '''
-                        cd ansible
-                        ansible-playbook -i inventory playbook.yml --private-key $SSH_KEY
-                    '''
+                dir('ansible') {
+                    sh 'ansible-playbook -i inventory playbook.yml --check'
+                }
+            }
         }
-    }
-}
-
     }
 }

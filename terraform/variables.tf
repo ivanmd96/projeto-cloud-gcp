@@ -28,10 +28,13 @@ variable "subnet_name" {
   default     = "projeto-1"
 }
 
+variable "create_subnet" {
+  type    = bool
+  default = true
+}
+
 variable "subnet_range" {
-  description = "Faixa de IPs da subrede"
-  type        = string
-  default     = "192.168.100.0/24"
+  type = string
 }
 
 variable "vm_name" {
@@ -52,13 +55,13 @@ variable "vm_image" {
   default     = "ubuntu-os-cloud/ubuntu-2004-lts"
 }
 
-variable "ssh_key_path" {
-  description = "Caminho do arquivo da chave pública SSH"
+variable "ssh_public_key" {
+  description = "Conteúdo da chave pública SSH"
   type        = string
-  default     = "chave.pub"
 }
 
-variable "credentials_file" {
-  description = "Caminho do arquivo de credenciais do GCP"
+variable "credentials_path" {
+  description = "Caminho do arquivo de credenciais do GCP passado via Jenkins"
   type        = string
 }
+
