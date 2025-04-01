@@ -26,3 +26,12 @@ module "network" {
   subnet_name    = var.subnet_name
   region         = var.region
 }
+
+
+output "instance_ip" {
+  value = module.vm.instance_ip
+}
+
+output "instance_name" {
+  value = module.vm.instance_name
+}
