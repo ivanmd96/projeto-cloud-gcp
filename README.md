@@ -96,10 +96,4 @@ Se os recursos já existirem, **nada será recriado**.
   git push origin main
   ```
 
-## ✅ Próximos Passos (V3)
-
-- Separar infraestrutura (`infra`) e configuração (`config`) em branches ou repositórios.
-- Adicionar mais serviços (ex: CloudSQL, GKE).
-- Implementar notificações via Slack ou email no Jenkins.
-
 Infraestrutura GCP automatizada com foco em **boas práticas**, **idempotência** e **modularização**.
