@@ -46,26 +46,7 @@ pipeline {
             }
         }
 
-        stage('Importar VM (se necessário)') {
-            steps {
-                withCredentials([
-                    string(credentialsId: 'ssh-public-key', variable: 'SSH_PUB_KEY'),
-                    file(credentialsId: 'terraform-key', variable: 'GOOGLE_CREDENTIALS')
-                ]) {
-                    dir("terraform") {
-                        sh '''
-                            terraform state list | grep "module.vm.google_compute_instance.vm" || \
-                            terraform import \
-                                -var="ssh_public_key=$SSH_PUB_KEY" \
-                                -var="credentials_path=$GOOGLE_CREDENTIALS" \
-                                -var-file="environments/$AMBIENTE/${AMBIENTE}.tfvars" \
-                                module.vm.google_compute_instance.vm \
-                                projects/projeto-cloud-estudo/zones/us-central1-a/instances/vm-$AMBIENTE
-                        '''
-                    }
-                }
-            }
-        }
+
 
         stage('Terraform Apply') {
             steps {
