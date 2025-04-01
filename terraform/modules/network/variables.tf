@@ -16,18 +16,3 @@ variable "subnet_name" {
   default     = "projeto-1"
 }
 
-variable "subnet_range" {
-  description = "Faixa de IPs da subrede"
-  type        = string
-  default     = "192.168.100.0/24"
-}
-
-variable "vpc_self_link" {
-  description = "Self link da VPC já existente"
-  type        = string
-}
-
-variable "create_subnet" {
-  type    = bool
-  default = true
-}

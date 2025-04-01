@@ -28,11 +28,6 @@ variable "subnet_name" {
   default     = "projeto-1"
 }
 
-variable "subnet_range" {
-  description = "Faixa de IPs da subrede"
-  type        = string
-  default     = "192.168.100.0/24"
-}
 
 variable "vm_name" {
   description = "Nome da VM"
