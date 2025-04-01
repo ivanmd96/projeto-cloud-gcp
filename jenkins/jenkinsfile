@@ -75,6 +75,7 @@ pipeline {
                 ]) {
                  dir("terraform") {
                         sh '''
+                            terraform output -raw instance_ip
                             terraform apply \
                                 -auto-approve \
                                 -var="ssh_public_key=$SSH_PUB_KEY" \
